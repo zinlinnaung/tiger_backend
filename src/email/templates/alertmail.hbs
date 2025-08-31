@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Event Confirmation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background-color: #1f90d1;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+    }
+    .footer a {
+      color: #1f90d1;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .event-details {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+    .event-details ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .confirm-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #1f90d1;
+      color: #fff !important;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+    }
+    .confirm-button:hover {
+      background-color: #166fa1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Event Confirmation</h1>
+    </div>
+    <div class="content">
+      <p>Dear <strong>{{guestName}}</strong>,</p>
+      <p>Thank you for confirming your attendance. We’re excited to have you join us for <strong>{{eventName}}</strong>.</p>
+      
+      <div class="event-details">
+        <h3>Event Details</h3>
+        <ul>
+          <li><strong>Date:</strong> {{eventDate}}</li>
+          <li><strong>Time:</strong> {{eventTime}}</li>
+          <li><strong>Venue:</strong> {{eventVenue}}</li>
+        </ul>
+      </div>
+
+      <div class="button-container">
+        <a href="{{confirmationUrl}}" class="confirm-button" target="_blank">Confirm Attendance</a>
+      </div>
+      
+      <p>Please keep this email as your confirmation. A reminder will be sent one day before the event.</p>
+      <p>We look forward to welcoming you.</p>
+      
+      <p>Best regards,<br><strong>{{organizerName}}</strong></p>
+    </div>
+    
+  </div>
+</body>
+</html>

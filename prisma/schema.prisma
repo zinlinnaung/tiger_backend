@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  email      String   @unique
+  password   String
+  reset_code String?
+  role       Role     @default(Admin)
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+enum Role {
+  User
+  Admin
+}
+
+model AlertEmail {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
+}
+
+model InvitedPeople {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  phone                 String   @unique
+  email                 String   @unique
+  additional_guest      Boolean  @default(false)
+  additional_guest_name String?
+  confirmed             Boolean  @default(false)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  created_by            Int?
+  updated_by            Int?
+}

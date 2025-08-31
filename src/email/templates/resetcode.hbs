@@ -1,0 +1,85 @@
+<!-- src/mailer/templates/reset-password.hbs -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Reset Password</title>
+  <style>
+    .h1{
+    color: #191921;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background-color: #191921;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-top: 5PX solid #59F8E8;
+      border-bottom: 5PX solid #59F8E8;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .content {
+      color: white;
+      text-align: center;
+      
+
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .p{
+      color: #ffffff;
+    }
+    .footer{
+      text-align: center;
+    }
+    .footer a {
+        color: #1f90d1;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="color: #ffffff;">Reset Your Password</h1>
+    </div>
+    <div class="content">
+      <p style="color: #ffffff;">We received a request to reset your password. Use the code below to reset it.</p>
+      <div>
+          <h1 style="background-color: #59F8E8; text-align: center; color:#191921;">{{resetCode}}</h1>
+      </div>
+      <p style="color: #ffffff;">If you did not request a password reset, please ignore this email.</p>
+      <p style="color: #ffffff;">
+        <a href="https://yourwebsite.com/reset-password?code={{resetCode}}" class="button">Reset Password</a>
+      </p>
+    </div>
+    <div class="footer">
+        <img src="https://report.bppays.com/images/blueplanet.png" alt="" width="150">
+        <p style="color: #ffffff;">If you have any questions or need assistance, please contact our IT team.</p>
+        <p style="color: #ffffff;">
+          <a href="mailto:it-support@yourcompany.com">it-support@yourcompany.com</a> |
+          <a href="tel:+1234567890">+959 234 567 890</a>
+        </p>
+      </div>
+  </div>
+</body>
+</html>

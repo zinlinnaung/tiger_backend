@@ -140,11 +140,11 @@ export class EmailService {
   }
 
   async sendMailWithBody(emailDto: EmailDto, context: ContextDto) {
-    const mailsList = await this.get_all_alert_emails();
-    const mailstring = await this.getEmailsString(mailsList);
+    // const mailsList = await this.get_all_alert_emails();
+    // const mailstring = await this.getEmailsString(mailsList);
 
     const result = await this.mailerService.sendMail({
-      to: mailstring,
+      to: emailDto.to, // list of receivers
       from: this.configService.get<string>('EMAIL_FROM'),
       subject: emailDto.subject,
       template: 'alertmail',

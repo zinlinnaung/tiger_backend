@@ -13,7 +13,7 @@ import { join } from 'path';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: 'smtp.office365.com',
+          host: 'smtp.gmail.com',
           port: 587,
           secure: false, // TLS will be used
           auth: {
@@ -24,7 +24,7 @@ import { join } from 'path';
         defaults: {
           from:
             configService.get<string>('EMAIL_FROM') ||
-            `"Blue Planet Spin The Wheel" <${configService.get<string>('EMAIL_USER')}>`,
+            `"Tiger Invites" <${configService.get<string>('EMAIL_USER')}>`,
         },
         template: {
           dir: join(__dirname, './templates'),

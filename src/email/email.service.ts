@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -140,20 +142,27 @@ export class EmailService {
   }
 
   async sendMailWithBody(emailDto: EmailDto, context: ContextDto) {
-    // const mailsList = await this.get_all_alert_emails();
-    // const mailstring = await this.getEmailsString(mailsList);
+    try {
+      const result = await this.mailerService.sendMail({
+        to: emailDto.to,
+        from: this.configService.get<string>('EMAIL_FROM'),
+        subject: emailDto.subject,
+        template: 'alertmail',
+        context,
+      });
 
-    const result = await this.mailerService.sendMail({
-      to: emailDto.to, // list of receivers
-      from: this.configService.get<string>('EMAIL_FROM'),
-      subject: emailDto.subject,
-      template: 'alertmail',
-      context,
+      return result;
+    } catch (error) {
+      if (error.response?.statusCode === 400) {
+        throw new BadRequestException(
+          'Invalid email address or request format.',
+        );
+      }
 
-      // attachments: attachments,
-    });
-    // console.log(result);
-    return result;
+      throw new InternalServerErrorException(
+        'Failed to send email. Please try again later.',
+      );
+    }
   }
   async generateCode() {
     const resetCode = Math.random().toString(36).substring(2, 7); // Generate a random reset code

@@ -13,6 +13,7 @@ import { join } from 'path';
 
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailModule } from './email/email.module';
+import { InvitedPeopleModule } from './invite/invite.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EmailModule } from './email/email.module';
     UserModule,
     AuthenticationModule,
     EmailModule,
+    InvitedPeopleModule,
 
     // CustomerModule,
   ],

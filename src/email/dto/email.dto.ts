@@ -31,10 +31,6 @@ export class ContextDto {
   @IsString()
   @IsNotEmpty()
   organizerName: string;
-
-  @IsUrl()
-  @IsNotEmpty()
-  confirmationUrl: string;
 }
 
 // model AlertEmail {

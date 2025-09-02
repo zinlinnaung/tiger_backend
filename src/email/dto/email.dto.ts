@@ -18,6 +18,10 @@ export class ContextDto {
 
   @IsString()
   @IsNotEmpty()
+  additionalGuestName: string;
+
+  @IsString()
+  @IsNotEmpty()
   eventName: string;
 
   @IsString()

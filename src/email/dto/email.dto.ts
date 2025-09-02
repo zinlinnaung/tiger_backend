@@ -8,6 +8,10 @@ import {
 import { Type } from 'class-transformer';
 
 export class ContextDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
   @IsString()
   @IsNotEmpty()
   guestName: string;

@@ -143,12 +143,30 @@ export class EmailService {
 
   async sendMailWithBody(emailDto: EmailDto, context: ContextDto) {
     try {
+      // Build plain-text version
+      const plainText = `
+Dear ${context.guestName},
+
+Thank you for confirming your attendance. We’re excited to have you join us for ${context.eventName}.
+
+Event Details:
+- Date: ${context.eventDate}
+- Time: ${context.eventTime}
+- Venue: ${context.eventVenue}
+
+You can edit or update your details here: https://tigerinvites.com/edit?id=${context.id}
+
+Best regards,
+${context.organizerName}
+    `;
+
       const result = await this.mailerService.sendMail({
         to: emailDto.to,
         from: this.configService.get<string>('EMAIL_FROM'),
         subject: emailDto.subject,
-        template: 'alertmail',
+        template: 'alertmail', // handlebars template (the HTML I gave you)
         context,
+        text: plainText, // 👈 plain-text fallback
       });
 
       return result;
@@ -164,6 +182,7 @@ export class EmailService {
       );
     }
   }
+
   async generateCode() {
     const resetCode = Math.random().toString(36).substring(2, 7); // Generate a random reset code
     return resetCode.toUpperCase();

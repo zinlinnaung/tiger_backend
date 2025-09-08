@@ -34,16 +34,8 @@ export class EmailController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   async sendEmail(@Body() emailDto: EmailDto) {
-    // try {
     await this.emailService.sendMailWithBody(emailDto, emailDto.context);
     return { success: true, message: 'Email sent successfully' };
-    // } catch (error) {
-    //   return {
-    //     success: false,
-    //     message: 'Failed to send email',
-    //     error: error.message,
-    //   };
-    // }
   }
   // @Public()
   // @ApiBearerAuth()

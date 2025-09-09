@@ -142,9 +142,9 @@ export class EmailService {
   }
 
   async sendMailWithBody(emailDto: EmailDto, context: ContextDto) {
-    try {
-      // Build plain-text version
-      const plainText = `
+    // try {
+    // Build plain-text version
+    const plainText = `
 Dear ${context.guestName},
 
 Thank you for confirming your attendance. We’re excited to have you join us for ${context.eventName}.
@@ -160,27 +160,27 @@ Best regards,
 ${context.organizerName}
     `;
 
-      const result = await this.mailerService.sendMail({
-        to: emailDto.to,
-        from: this.configService.get<string>('EMAIL_FROM'),
-        subject: emailDto.subject,
-        template: 'alertmail', // handlebars template (the HTML I gave you)
-        context,
-        text: plainText, // 👈 plain-text fallback
-      });
+    const result = await this.mailerService.sendMail({
+      to: emailDto.to,
+      from: this.configService.get<string>('EMAIL_FROM'),
+      subject: emailDto.subject,
+      template: 'alertmail', // handlebars template (the HTML I gave you)
+      context,
+      text: plainText, // 👈 plain-text fallback
+    });
 
-      return result;
-    } catch (error) {
-      if (error.response?.statusCode === 400) {
-        throw new BadRequestException(
-          'Invalid email address or request format.',
-        );
-      }
+    return result;
+    // } catch (error) {
+    //   if (error.response?.statusCode === 400) {
+    //     throw new BadRequestException(
+    //       'Invalid email address or request format.',
+    //     );
+    //   }
 
-      throw new InternalServerErrorException(
-        'Failed to send email. Please try again later.',
-      );
-    }
+    //   throw new InternalServerErrorException(
+    //     'Failed to send email. Please try again later.',
+    //   );
+    // }
   }
 
   async generateCode() {

@@ -13,18 +13,21 @@ import { join } from 'path';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: 'smtp.gmail.com',
-          port: 587,
-          secure: false, // TLS will be used
+          host:
+            configService.get<string>('EMAIL_HOST') || 'mail.privateemail.com',
+          port: parseInt(configService.get<string>('EMAIL_PORT'), 10) || 587,
+          secure: configService.get<string>('EMAIL_SECURE') === 'true', // true for port 465 (SSL)
           auth: {
-            user: configService.get<string>('EMAIL_USER'),
-            pass: configService.get<string>('EMAIL_PASS'), // <-- FIX HERE
+            user:
+              configService.get<string>('EMAIL_USER') ||
+              'rsvp@tigerinvites.com',
+            pass: 'Hun!@#Lin92', // your Private Email password
           },
         },
         defaults: {
           from:
             configService.get<string>('EMAIL_FROM') ||
-            `"Tiger Invites" <${configService.get<string>('EMAIL_USER')}>`,
+            `"Tiger Invites" <${configService.get<string>('EMAIL_USER') || 'rsvp@tigerinvites.com'}>`,
         },
         template: {
           dir: join(__dirname, './templates'),

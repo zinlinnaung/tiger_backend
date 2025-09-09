@@ -12,8 +12,12 @@ import { ConfigService } from '@nestjs/config';
 import { AlertEmailDto, CheckCodeDto, EmailDto, ContextDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AlertEmail } from 'generated/client';
+import * as dns from 'dns';
 import { UserDto } from 'src/user/dto';
+import { isEmail } from 'class-validator';
+import { promisify } from 'util';
 
+const dnsResolveMx = promisify(dns.resolveMx);
 @Injectable()
 export class EmailService {
   private transporter;
@@ -141,32 +145,43 @@ export class EmailService {
     return emails.join(',');
   }
 
-  async sendMailWithBody(emailDto: EmailDto, context: ContextDto) {
+  async sendMailWithBody(emailDto: any, context: any) {
+    // Validate email format
+    if (!isEmail(emailDto.to)) {
+      throw new BadRequestException('Invalid email address format');
+    }
+
+    // Validate domain exists
+    const domain = emailDto.to.split('@')[1];
+    try {
+      await this.validateEmailDomain(domain);
+    } catch (error) {
+      throw new BadRequestException('Invalid email domain');
+    }
+
+    // Build plain-text version (important for deliverability)
+    const plainText = this.buildPlainTextEmail(context);
+
     // try {
-    // Build plain-text version
-    const plainText = `
-Dear ${context.guestName},
-
-Thank you for confirming your attendance. We’re excited to have you join us for ${context.eventName}.
-
-Event Details:
-- Date: ${context.eventDate}
-- Time: ${context.eventTime}
-- Venue: ${context.eventVenue}
-
-You can edit or update your details here: https://tigerinvites.com/edit?id=${context.id}
-
-Best regards,
-${context.organizerName}
-    `;
+    // Create headers with priority information
+    const headers = {
+      'List-Unsubscribe': `<https://tigerinvites.com/unsubscribe?id=${context.id}>`,
+      Precedence: 'bulk',
+      'X-Priority': '3',
+      'X-Mailer': 'TigerInvites Mailer',
+      'X-Auto-Response-Suppress': 'All',
+      'Return-Path': '<rsvp@tigerinvites.com>',
+      'Message-ID': `<${context.id}@tigerinvites.com>`,
+    };
 
     const result = await this.mailerService.sendMail({
       to: emailDto.to,
       from: this.configService.get<string>('EMAIL_FROM'),
       subject: emailDto.subject,
-      template: 'alertmail', // handlebars template (the HTML I gave you)
+      template: 'alertmail',
       context,
-      text: plainText, // 👈 plain-text fallback
+      text: plainText,
+      headers: headers,
     });
 
     return result;
@@ -177,10 +192,90 @@ ${context.organizerName}
     //     );
     //   }
 
+    //   // Handle specific SMTP errors
+    //   if (error.code === 'EENVELOPE' || error.command === 'DATA') {
+    //     throw new BadRequestException(
+    //       'Failed to process email request. Please check the provided information.',
+    //     );
+    //   }
+
     //   throw new InternalServerErrorException(
     //     'Failed to send email. Please try again later.',
     //   );
     // }
+  }
+
+  private buildPlainTextEmail(context: any): string {
+    return `
+Dear ${context.guestName},
+
+Thank you for confirming your attendance. We're excited to have you join us for ${context.eventName}.
+
+EVENT DETAILS:
+- Date: ${context.eventDate}
+- Time: ${context.eventTime}
+- Venue: ${context.eventVenue}
+
+You can edit or update your details here: https://tigerinvites.com/edit?id=${context.id}
+
+If you wish to unsubscribe from future emails, please visit: https://tigerinvites.com/unsubscribe?id=${context.id}
+
+Best regards,
+${context.organizerName}
+Tiger Invites Team
+    `.trim();
+  }
+
+  private async validateEmailDomain(domain: string): Promise<boolean> {
+    try {
+      const mxRecords = await dnsResolveMx(domain);
+      return mxRecords && mxRecords.length > 0;
+    } catch (error) {
+      // If MX record check fails, try alternative check
+      try {
+        await dns.promises.resolve(domain);
+        return true;
+      } catch (secondError) {
+        throw new Error(`Domain ${domain} does not exist`);
+      }
+    }
+  }
+
+  // Additional method to send test emails
+  async sendTestEmail(to: string) {
+    const testContext = {
+      guestName: 'Test User',
+      eventName: 'Sample Event',
+      eventDate: new Date().toLocaleDateString(),
+      eventTime: '2:00 PM',
+      eventVenue: 'Test Venue',
+      organizerName: 'Test Organizer',
+      id: 'test-id-123',
+    };
+
+    return this.sendMailWithBody(
+      { to, subject: 'Test Email from Tiger Invites' },
+      testContext,
+    );
+  }
+
+  // Method to check email service status
+  async checkServiceStatus(): Promise<{ status: string; message: string }> {
+    try {
+      // Try to resolve the SMTP host to check connectivity
+      const emailHost = this.configService.get<string>('EMAIL_HOST');
+      await dns.promises.resolve(emailHost);
+
+      return {
+        status: 'OK',
+        message: `Email service is configured correctly. SMTP host: ${emailHost}`,
+      };
+    } catch (error) {
+      return {
+        status: 'ERROR',
+        message: `Email service configuration issue: ${error.message}`,
+      };
+    }
   }
 
   async generateCode() {

@@ -175,7 +175,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "E:\\Work\\Tiger\\tiger_backend\\generated\\client",
+      "value": "/home/draxx/BIT/projects/tiger_backend/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -184,12 +184,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "E:\\Work\\Tiger\\tiger_backend\\prisma\\schema.prisma",
+    "sourceFilePath": "/home/draxx/BIT/projects/tiger_backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

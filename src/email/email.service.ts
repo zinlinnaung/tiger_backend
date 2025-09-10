@@ -160,17 +160,19 @@ export class EmailService {
     }
 
     // Build plain-text version
-    const plainText = this.buildPlainTextEmail(context);
+    // const plainText = this.buildPlainTextEmail(context);
+    const html = this.buildHtmlEmail(context);
+    const plainText = html.replace(/<[^>]+>/g, '');
 
     // Headers
     const headers = {
       'List-Unsubscribe': `<https://tigerinvites.com/unsubscribe?id=${context.id}>`,
-      Precedence: 'bulk',
-      'X-Priority': '3',
+      // Precedence: 'bulk',
+      // 'X-Priority': '3',
       'X-Mailer': 'TigerInvites Mailer',
-      'X-Auto-Response-Suppress': 'All',
-      'Return-Path': '<rsvp@tigerinvites.com>',
-      'Message-ID': `<${context.id}@tigerinvites.com>`,
+      // 'X-Auto-Response-Suppress': 'All',
+      // 'Return-Path': '<rsvp@tigerinvites.com>',
+      // 'Message-ID': `<${context.id}@tigerinvites.com>`,
     };
 
     const result = await this.mailerService.sendMail({
@@ -178,10 +180,47 @@ export class EmailService {
       from: this.configService.get<string>('EMAIL_FROM'),
       subject: emailDto.subject,
       text: plainText, // ✅ only plain text
+      html,
       headers,
     });
 
     return result;
+  }
+
+  private buildHtmlEmail(context: any): string {
+    const editLink = `https://tigerinvites.com/edit?id=${encodeURIComponent(context.id)}`;
+    const unsubscribeLink = `https://tigerinvites.com/unsubscribe?id=${encodeURIComponent(context.id)}`;
+
+    return `
+      <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5; max-width: 600px; margin: 0 auto;">
+        <p>Dear ${context.guestName},</p>
+
+        <p>Thank you for confirming your attendance. We're excited to have you join us for <strong>${context.eventName}</strong>.</p>
+
+        <p>
+          <strong>Event Details:</strong><br/>
+          Date: ${context.eventDate}<br/>
+          Time: ${context.eventTime}<br/>
+          Venue: ${context.eventVenue}
+        </p>
+
+        <p>
+          You can edit or update your details here: 
+          <a href="${editLink}" style="color: #1a73e8; text-decoration: underline;">Edit RSVP</a>
+        </p>
+
+        <p>
+          If you wish to unsubscribe from future emails, please visit: 
+          <a href="${unsubscribeLink}" style="color: #1a73e8; text-decoration: underline;">Unsubscribe</a>
+        </p>
+
+        <p>
+          Best regards,<br/>
+          ${context.organizerName}<br/>
+          Tiger Invites Team
+        </p>
+      </div>
+    `;
   }
 
   private buildPlainTextEmail(context: any): string {

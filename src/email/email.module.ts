@@ -25,13 +25,13 @@ import { join } from 'path';
         defaults: {
           from: configService.get<string>('EMAIL_FROM'),
         },
-        template: {
-          dir: join(__dirname, './templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
-        },
+        // template: {
+        //   dir: join(__dirname, './templates'),
+        //   adapter: new HandlebarsAdapter(),
+        //   options: {
+        //     strict: true,
+        //   },
+        // },
       }),
       inject: [ConfigService],
     }),

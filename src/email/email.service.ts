@@ -223,7 +223,6 @@ export class EmailService {
     `;
   }
 
-
   private buildPlainTextEmail(context: any): string {
     return `
 Dear ${context.guestName},

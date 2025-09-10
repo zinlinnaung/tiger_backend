@@ -159,11 +159,30 @@ export class EmailService {
       throw new BadRequestException('Invalid email domain');
     }
 
-    // Build plain-text version (important for deliverability)
+    // Build plain-text version
     const plainText = this.buildPlainTextEmail(context);
 
-    // try {
-    // Create headers with priority information
+    // Build HTML version (instead of template)
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <h2>${emailDto.subject}</h2>
+        <p>Hello,</p>
+        <p>${context.message}</p>
+        <div style="margin-top: 20px;">
+          <a href="https://tigerinvites.com/edit?id=${context.id}" 
+             style="display:inline-block;padding:10px 20px;background:#007bff;color:#fff;
+                    border-radius:6px;text-decoration:none;">
+            Edit Invitation
+          </a>
+        </div>
+        <hr />
+        <small>If you no longer wish to receive these emails, 
+          <a href="https://tigerinvites.com/unsubscribe?id=${context.id}">unsubscribe</a>.
+        </small>
+      </div>
+    `;
+
+    // Headers
     const headers = {
       'List-Unsubscribe': `<https://tigerinvites.com/unsubscribe?id=${context.id}>`,
       Precedence: 'bulk',
@@ -178,31 +197,12 @@ export class EmailService {
       to: emailDto.to,
       from: this.configService.get<string>('EMAIL_FROM'),
       subject: emailDto.subject,
-      template: 'alertmail',
-      context,
-      text: plainText,
-      headers: headers,
+      text: plainText, // plain text version
+      html: htmlBody, // html version (instead of template)
+      headers,
     });
 
     return result;
-    // } catch (error) {
-    //   if (error.response?.statusCode === 400) {
-    //     throw new BadRequestException(
-    //       'Invalid email address or request format.',
-    //     );
-    //   }
-
-    //   // Handle specific SMTP errors
-    //   if (error.code === 'EENVELOPE' || error.command === 'DATA') {
-    //     throw new BadRequestException(
-    //       'Failed to process email request. Please check the provided information.',
-    //     );
-    //   }
-
-    //   throw new InternalServerErrorException(
-    //     'Failed to send email. Please try again later.',
-    //   );
-    // }
   }
 
   private buildPlainTextEmail(context: any): string {

@@ -162,26 +162,6 @@ export class EmailService {
     // Build plain-text version
     const plainText = this.buildPlainTextEmail(context);
 
-    // Build HTML version (instead of template)
-    const htmlBody = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>${emailDto.subject}</h2>
-        <p>Hello,</p>
-        <p>${context.message}</p>
-        <div style="margin-top: 20px;">
-          <a href="https://tigerinvites.com/edit?id=${context.id}" 
-             style="display:inline-block;padding:10px 20px;background:#007bff;color:#fff;
-                    border-radius:6px;text-decoration:none;">
-            Edit Invitation
-          </a>
-        </div>
-        <hr />
-        <small>If you no longer wish to receive these emails, 
-          <a href="https://tigerinvites.com/unsubscribe?id=${context.id}">unsubscribe</a>.
-        </small>
-      </div>
-    `;
-
     // Headers
     const headers = {
       'List-Unsubscribe': `<https://tigerinvites.com/unsubscribe?id=${context.id}>`,
@@ -197,8 +177,7 @@ export class EmailService {
       to: emailDto.to,
       from: this.configService.get<string>('EMAIL_FROM'),
       subject: emailDto.subject,
-      text: plainText, // plain text version
-      html: htmlBody, // html version (instead of template)
+      text: plainText, // ✅ only plain text
       headers,
     });
 
